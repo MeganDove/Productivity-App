@@ -1,11 +1,17 @@
 import mongoose from 'mongoose';
+import Task from './task.js'
+
+const Schema = mongoose.Schema;
 
 const postSchema = mongoose.Schema({
-    title: String,
-    message: String,
-    creator: String,
+    description: String,
+    collectionName: String,
     tags: [String],
-    selectedFile: String,
+    selectedFile: String,    
+    tasks: [{
+        type: Schema.Types.ObjectId,
+        ref: Task
+    }],
     likeCount: {
         type: Number,
         default: 0,

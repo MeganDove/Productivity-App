@@ -2,10 +2,13 @@ import express from 'express';
 import mongoose from 'mongoose';
 
 import PostMessage from '../models/postMessage.js';
+import Task from '../models/task.js';
+
+import post from './posts.js';
 
 const router = express.Router();
 
-export const getPosts = async (req, res) => { 
+export const getTasks = async (req, res) => { 
     try {
         const postMessages = await PostMessage.find();
                 
@@ -15,33 +18,26 @@ export const getPosts = async (req, res) => {
     }
 }
 
-export const getPost = async (req, res) => { 
-    const { id } = req.params;
+export const createTask = async (req, res) => {
+    console.log("creating task")
+    const { title, description, tags } = req.body;
+
+    const newTask = new Task( {title, description, tags} )
+    console.log(req.params.id)
+
+    await PostMessage.findByIdAndUpdate(req.params.id, {$push: {tasks: newTask}}, { new: true });
 
     try {
-        const post = await PostMessage.findById(id);
-        
-        res.status(200).json(post);
+        await newTask.save();
+
+        res.status(201).json(newTask);
     } catch (error) {
-        res.status(404).json({ message: error.message });
-    }
-}
-
-export const createPost = async (req, res) => {
-    const { description, selectedFile, collectionName, tags } = req.body;
-
-    const newPostMessage = new PostMessage( {description, collectionName} )
-    console.log(newPostMessage)
-    try {
-        await newPostMessage.save();
-
-        res.status(201).json(newPostMessage );
-    } catch (error) {
+        console.log(error)
         res.status(409).json({ message: error });
     }
 }
 
-export const updatePost = async (req, res) => {
+export const updateTask = async (req, res) => {
     const { id } = req.params;
     const { description, collectionName, selectedFile, tags } = req.body;
     
@@ -54,7 +50,7 @@ export const updatePost = async (req, res) => {
     res.json(updatedPost);
 }
 
-export const deletePost = async (req, res) => {
+export const deleteTask = async (req, res) => {
     const { id } = req.params;
 
     if (!mongoose.Types.ObjectId.isValid(id)) return res.status(404).send(`No post with id: ${id}`);
@@ -64,16 +60,5 @@ export const deletePost = async (req, res) => {
     res.json({ message: "Post deleted successfully." });
 }
 
-export const likePost = async (req, res) => {
-    const { id } = req.params;
-
-    if (!mongoose.Types.ObjectId.isValid(id)) return res.status(404).send(`No post with id: ${id}`);
-    
-    const post = await PostMessage.findById(id);
-
-    const updatedPost = await PostMessage.findByIdAndUpdate(id, { likeCount: post.likeCount + 1 }, { new: true });
-    
-    res.json(updatedPost);
-}
 
 export default router;
