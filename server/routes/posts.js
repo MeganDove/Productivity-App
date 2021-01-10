@@ -5,12 +5,13 @@ import { getTasks, createTask, updateTask, deleteTask } from '../controllers/tas
 
 const router = express.Router();
 
-router.get('/', getPosts);
-router.post('/', createPost);
-router.patch('/:id', updatePost);
-router.delete('/:id', deletePost);
-router.patch('/:id/likePost', likePost);
+router.get('/posts', getPosts);
+router.post('/posts', createPost);
+router.patch('/posts/:id', updatePost);
+router.delete('/posts/:id', deletePost);
+router.patch('/posts/:id/likePost', likePost);
 
-router.post('/:id/tasks',createTask);
+router.get('/tasks',getTasks);
+router.post('/tasks',createTask);
 
 export default router;

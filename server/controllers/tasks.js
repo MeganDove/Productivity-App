@@ -10,9 +10,9 @@ const router = express.Router();
 
 export const getTasks = async (req, res) => { 
     try {
-        const postMessages = await PostMessage.find();
+        const tasks = await Task.find();
                 
-        res.status(200).json(postMessages);
+        res.status(200).json(tasks);
     } catch (error) {
         res.status(404).json({ message: error.message });
     }
@@ -20,15 +20,14 @@ export const getTasks = async (req, res) => {
 
 export const createTask = async (req, res) => {
     console.log("creating task")
-    const { title, description, tags } = req.body;
+    const { title, description, tags } = req.body.newTask;
 
     const newTask = new Task( {title, description, tags} )
-    console.log(req.params.id)
 
-    await PostMessage.findByIdAndUpdate(req.params.id, {$push: {tasks: newTask}}, { new: true });
 
     try {
         await newTask.save();
+        await PostMessage.findByIdAndUpdate(req.body.boardId, {$push: {tasks: newTask}}, { new: true });
 
         res.status(201).json(newTask);
     } catch (error) {
