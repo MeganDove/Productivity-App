@@ -20,9 +20,9 @@ export const getTasks = async (req, res) => {
 
 export const createTask = async (req, res) => {
     console.log("creating task")
-    const { title, description, tags } = req.body.newTask;
+    const { _id, title, description, tags } = req.body.newTask;
 
-    const newTask = new Task( {title, description, tags} )
+    const newTask = new Task( { _id, title, description, tags} )
 
 
     try {
